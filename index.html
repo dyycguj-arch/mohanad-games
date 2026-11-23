@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>مهند للألعاب الإلكترونية - متجر الألعاب</title>
+  <meta name="description" content="متجر مهند للألعاب الإلكترونية لتحميل الألعاب الخفيفة والمميزة برابط مباشر.">
+  <style>
+    * { box-sizing: border-box; font-family: Tahoma, Arial, sans-serif; }
+    body { margin: 0; background: #090d16; color: #f1f5f9; }
+
+    header {
+      background: linear-gradient(135deg, #111827, #1e293b);
+      padding: 22px 15px;
+      border-bottom: 2px solid #22c55e;
+    }
+    .header-inner {
+      max-width: 1150px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .brand-title {
+      margin: 0;
+      font-size: 26px;
+      color: #22c55e;
+    }
+    .brand-sub {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .dev-btn {
+      background: #f59e0b;
+      color: #090d16;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .dev-btn:hover { background: #d97706; }
+
+    .controls-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .search-input, .filter-select {
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #0f172a;
+      color: #fff;
+      font-size: 14px;
+    }
+    .search-input { flex: 1; min-width: 220px; }
+
+    /* شريط وضع المطور عند الفتح */
+    .dev-panel {
+      display: none;
+      max-width: 1150px;
+      margin: 20px auto 0;
+      padding: 18px;
+      background: #172033;
+      border: 1px solid #f59e0b;
+      border-radius: 12px;
+    }
+    .dev-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .dev-panel-header h2 { margin: 0; font-size: 18px; color: #fbbf24; }
+    .btn-add-game {
+      background: #22c55e;
+      color: #090d16;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-lock {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* شبكة المتجر */
+    .store-grid {
+      max-width: 1150px;
+      margin: 28px auto;
+      padding: 0 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .game-card {
+      background: #111827;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .game-card img {
+      width: 100%;
+      height: 165px;
+      object-fit: cover;
+      background: #1e293b;
+    }
+    .card-content { padding: 15px; }
+    .game-name { margin: 0 0 6px; font-size: 18px; color: #fff; }
+    .game-info { font-size: 12px; color: #38bdf8; margin-bottom: 10px; }
+    .game-desc { font-size: 13px; color: #cbd5e1; line-height: 1.5; margin-bottom: 14px; }
+    .card-actions { display: flex; flex-direction: column; gap: 8px; }
+    .btn-get {
+      display: block;
+      text-align: center;
+      background: #22c55e;
+      color: #090d16;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .btn-get:hover { background: #16a34a; }
+    .btn-delete {
+      display: none;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* النوافذ المنبثقة */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      z-index: 2000;
+    }
+    .modal-box {
+      background: #111827;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 22px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-box h3 { margin: 0 0 14px; color: #fbbf24; font-size: 19px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; margin-bottom: 5px; font-size: 13px; color: #cbd5e1; }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #090d16;
+      color: #fff;
+      font-size: 14px;
+    }
+    .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
+    .btn-confirm {
+      flex: 1;
+      background: #22c55e;
+      color: #090d16;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-cancel {
+      background: #334155;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .empty-store {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 15px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand-row">
+        <div>
+          <h1 class="brand-title">مهند للألعاب الإلكترونية</h1>
+          <p class="brand-sub">متجر الألعاب — تصفح وحمّل ألعابك المفضلة بسهولة</p>
+        </div>
+        <button class="dev-btn" onclick="openDevLogin()">للمطور</button>
+      </div>
+
+      <div class="controls-row">
+        <input type="text" id="searchBox" class="search-input" placeholder="ابحث عن لعبة في المتجر..." oninput="applyFilters()">
+        <select id="platformFilter" class="filter-select" onchange="applyFilters()">
+          <option value="ALL">كل الأقسام</option>
+          <option value="أندرويد">أندرويد</option>
+          <option value="كمبيوتر">كمبيوتر</option>
+          <option value="PSP">PSP</option>
+          <option value="متصفح">متصفح</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- لوحة المطور (تظهر فقط بعد إدخال كلمة المرور الصحيحة) -->
+  <section class="dev-panel" id="devPanel">
+    <div class="dev-panel-header">
+      <h2>وضع المطور مفعل — إدارة متجر مهند للألعاب الإلكترونية</h2>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn-add-game" onclick="openAddGameModal()">+ إضافة لعبة للمتجر</button>
+        <button class="btn-lock" onclick="lockDevMode()">قفل وضع المطور</button>
+      </div>
+    </div>
+    <p style="margin:0; font-size:13px; color:#cbd5e1;">
+      يمكنك الآن إضافة ألعاب جديدة إلى المتجر أو حذف أي لعبة من زر "حذف" أسفل بطاقتها.
+    </p>
+  </section>
+
+  <!-- شبكة عرض ألعاب المتجر -->
+  <main class="store-grid" id="storeGrid">
+    <div class="empty-store">جاري تحميل ألعاب المتجر...</div>
+  </main>
+
+  <!-- نافذة كلمة مرور المطور -->
+  <div class="modal-overlay" id="devLoginModal">
+    <div class="modal-box">
+      <h3>دخول قسم المطور</h3>
+      <div class="field">
+        <label>أدخل كلمة مرور المطور</label>
+        <input type="password" id="devPasswordInput" placeholder="اكتب كلمة المرور القوية">
+      </div>
+      <div class="modal-btns">
+        <button class="btn-confirm" onclick="verifyDevPassword()">دخول</button>
+        <button class="btn-cancel" onclick="closeModals()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة إضافة لعبة جديدة إلى المتجر -->
+  <div class="modal-overlay" id="addGameModal">
+    <div class="modal-box">
+      <h3>إضافة لعبة جديدة إلى المتجر</h3>
+      <div class="field">
+        <label>اسم اللعبة</label>
+        <input type="text" id="newGameTitle" placeholder="مثال: مغامرات مهند">
+      </div>
+      <div class="field">
+        <label>القسم</label>
+        <select id="newGamePlatform">
+          <option value="أندرويد">أندرويد</option>
+          <option value="كمبيوتر">كمبيوتر</option>
+          <option value="PSP">PSP</option>
+          <option value="متصفح">متصفح</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>الحجم</label>
+        <input type="text" id="newGameSize" placeholder="مثال: 220 MB">
+      </div>
+      <div class="field">
+        <label>رابط صورة اللعبة</label>
+        <input type="url" id="newGameImg" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>رابط تحميل اللعبة</label>
+        <input type="url" id="newGameUrl" placeholder="https://...">
+      </div>
+      <div class="field">
+        <label>وصف اللعبة</label>
+        <textarea id="newGameDesc" rows="2" placeholder="اكتب وصفاً قصيراً للعبة..."></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-confirm" id="publishGameBtn" onclick="saveNewGame()">إضافة للمتجر</button>
+        <button class="btn-cancel" onclick="closeModals()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // ضع بيانات مشروعك من Firebase هنا ليظهر المتجر لكل الزوار أونلاين
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // كلمة المرور القوية لقسم المطور
+    const DEV_SECRET_PASS = "M0h@n@d#G@m3s!2026";
+
+    let db = null;
+    let isDevUnlocked = false;
+    let storeGames = [];
+
+    if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      loadStoreGames();
+    } else {
+      storeGames = JSON.parse(localStorage.getItem("mohanad_store_games") || "[]");
+      applyFilters();
+    }
+
+    async function loadStoreGames() {
+      try {
+        const q = query(collection(db, "store_games"), orderBy("createdAt", "desc"));
+        const snap = await getDocs(q);
+        storeGames = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilters();
+      } catch (err) {
+        console.error(err);
+        document.getElementById("storeGrid").innerHTML = '<div class="empty-store">تأكد من تفعيل Firestore Database في Firebase.</div>';
+      }
+    }
+
+    window.openDevLogin = function() {
+      document.getElementById("devPasswordInput").value = "";
+      document.getElementById("devLoginModal").style.display = "flex";
+    };
+
+    window.verifyDevPassword = function() {
+      const entered = document.getElementById("devPasswordInput").value;
+      if (entered === DEV_SECRET_PASS) {
+        isDevUnlocked = true;
+        document.getElementById("devPanel").style.display = "block";
+        closeModals();
+        applyFilters();
+      } else {
+        alert("كلمة المرور غير صحيحة! هذا القسم مخصص للمطور فقط.");
+      }
+    };
+
+    window.lockDevMode = function() {
+      isDevUnlocked = false;
+      document.getElementById("devPanel").style.display = "none";
+      applyFilters();
+    };
+
+    window.openAddGameModal = function() {
+      if (!isDevUnlocked) {
+        openDevLogin();
+        return;
+      }
+      document.getElementById("addGameModal").style.display = "flex";
+    };
+
+    window.saveNewGame = async function() {
+      if (!isDevUnlocked) return;
+
+      const title = document.getElementById("newGameTitle").value.trim();
+      const platform = document.getElementById("newGamePlatform").value;
+      const size = document.getElementById("newGameSize").value.trim() || "غير محدد";
+      const image = document.getElementById("newGameImg").value.trim() || "https://via.placeholder.com/400x200/111827/22c55e?text=Mohanad+Games";
+      const link = document.getElementById("newGameUrl").value.trim();
+      const desc = document.getElementById("newGameDesc").value.trim() || "لعبة متاحة في متجر مهند للألعاب الإلكترونية.";
+
+      if (!title || !link) {
+        alert("يرجى إدخال اسم اللعبة ورابط التحميل.");
+        return;
+      }
+
+      const btn = document.getElementById("publishGameBtn");
+      btn.disabled = true;
+      btn.innerText = "جاري الإضافة...";
+
+      const gameObj = { title, platform, size, image, link, desc, createdAt: Date.now() };
+
+      if (db) {
+        const ref = await addDoc(collection(db, "store_games"), gameObj);
+        storeGames.unshift({ id: ref.id, ...gameObj });
+      } else {
+        storeGames.unshift({ id: String(Date.now()), ...gameObj });
+        localStorage.setItem("mohanad_store_games", JSON.stringify(storeGames));
+      }
+
+      btn.disabled = false;
+      btn.innerText = "إضافة للمتجر";
+      ["newGameTitle", "newGameSize", "newGameImg", "newGameUrl", "newGameDesc"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      closeModals();
+      applyFilters();
+    };
+
+    window.deleteStoreGame = async function(id) {
+      if (!isDevUnlocked) return;
+      if (!confirm("هل تريد حذف هذه اللعبة من المتجر؟")) return;
+
+      if (db) {
+        await deleteDoc(doc(db, "store_games", id));
+      }
+      storeGames = storeGames.filter(g => g.id !== id);
+      if (!db) {
+        localStorage.setItem("mohanad_store_games", JSON.stringify(storeGames));
+      }
+      applyFilters();
+    };
+
+    window.applyFilters = function() {
+      const q = document.getElementById("searchBox").value.toLowerCase().trim();
+      const plat = document.getElementById("platformFilter").value;
+
+      const filtered = storeGames.filter(g => {
+        const matchName = g.title.toLowerCase().includes(q);
+        const matchPlat = plat === "ALL" || g.platform === plat;
+        return matchName && matchPlat;
+      });
+
+      renderStore(filtered);
+    };
+
+    function renderStore(list) {
+      const grid = document.getElementById("storeGrid");
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="empty-store">لا توجد ألعاب معروضة في المتجر حالياً.</div>';
+        return;
+      }
+
+      grid.innerHTML = list.map(game => `
+        <article class="game-card">
+          <img src="${game.image}" alt="${game.title}" onerror="this.src='https://via.placeholder.com/400x200/111827/22c55e?text=Mohanad+Games'">
+          <div class="card-content">
+            <h3 class="game-name">${game.title}</h3>
+            <div class="game-info">القسم: ${game.platform} • الحجم: ${game.size}</div>
+            <p class="game-desc">${game.desc}</p>
+            <div class="card-actions">
+              <a href="${game.link}" class="btn-get" target="_blank" rel="noopener">تحميل اللعبة</a>
+              <button class="btn-delete" style="display:${isDevUnlocked ? 'block' : 'none'}" onclick="deleteStoreGame('${game.id}')">حذف اللعبة</button>
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    window.closeModals = function() {
+      document.getElementById("devLoginModal").style.display = "none";
+      document.getElementById("addGameModal").style.display = "none";
+    };
+  </script>
+</body>
+</html>
